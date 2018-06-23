@@ -8,7 +8,7 @@ defmodule Throttle.Application do
   def start(_type, _args) do
 
     children = [
-      {Roulette, [role: :both]},
+      {Throttle.Pubsub, [role: :both]},
       {Riverside, [handler: Throttle.Handler]}
     ]
 

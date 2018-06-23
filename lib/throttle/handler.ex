@@ -1,6 +1,7 @@
 defmodule Throttle.Handler do
 
   require Logger
+  alias Throttle.Pubsub
 
   use Riverside, otp_app: :throttle
 
@@ -12,6 +13,10 @@ defmodule Throttle.Handler do
     "jiro" => %{
       password:  "barbuz",
       user_id:  2
+    },
+    "saburo" => %{
+      password:  "buzfoo",
+      user_id:  3
     }
   }
 
@@ -35,7 +40,7 @@ defmodule Throttle.Handler do
 
   end
 
-  def do_authenticate(username, password) do
+  defp do_authenticate(username, password) do
     case Map.get(@userdb, username) do
 
       nil -> {:error, :unknown_user}
@@ -55,8 +60,15 @@ defmodule Throttle.Handler do
 
     Logger.info "<Throttle.Handler> init"
 
-    Roulette.sub("test_u:#{session.user_id}")
-    Roulette.sub("test_s:#{session.user_id}/#{session.id}")
+    Pubsub.sub("test_u:1")
+    Pubsub.sub("test_u:2")
+    Pubsub.sub("test_u:3")
+    Pubsub.sub("test_s:#{session.user_id}/#{session.id}")
+
+    #(0..100) |> Enum.each(fn _idx ->
+    #  r = SecureRandom.hex(20)
+    #  Pubsub.sub("test_u:dummy:#{r}")
+    #end)
 
     {:ok, session, state}
   end
@@ -83,7 +95,7 @@ defmodule Throttle.Handler do
 
     topic = "test_u:#{dest}"
 
-    Roulette.pub(topic, Poison.encode!(%{
+    Pubsub.pub(topic, Poison.encode!(%{
       from:    session.user_id,
       content: content,
     }))

@@ -5,7 +5,6 @@ const password = "foobar"
 const port     = 3333
 const path     = "/ws"
 
-
 let ws = null;
 
 function start() {
@@ -29,6 +28,7 @@ function setEventHandlers(ws) {
   })
 
   ws.on('message', (data) => {
+    console.log('socket opened')
     msg = JSON.parse(data)
     console.log(`received ${msg.from} - ${msg.content}`)
   })

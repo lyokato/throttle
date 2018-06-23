@@ -6,7 +6,7 @@ config :roulette, :connection,
   ],
   max_ping_failure: 3,
   ping_interval: 10000,
-  pool_size: 5
+  pool_size: 1
 
 config :throttle, Throttle.Handler,
   port: 3333,
