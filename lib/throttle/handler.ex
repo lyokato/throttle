@@ -20,7 +20,7 @@ defmodule Throttle.Handler do
     }
   }
 
-  @impl Riverside.Behaviour
+  @impl Riverside
   def authenticate(req) do
 
     {username, password} = req.basic
@@ -55,15 +55,15 @@ defmodule Throttle.Handler do
     end
   end
 
-  @impl Riverside.Behaviour
+  @impl Riverside
   def init(session, state) do
 
     Logger.info "<Throttle.Handler> init"
 
-    Pubsub.sub("test_u:1")
-    Pubsub.sub("test_u:2")
-    Pubsub.sub("test_u:3")
-    Pubsub.sub("test_s:#{session.user_id}/#{session.id}")
+    Pubsub.sub!("test_u:1")
+    Pubsub.sub!("test_u:2")
+    Pubsub.sub!("test_u:3")
+    Pubsub.sub!("test_s:#{session.user_id}/#{session.id}")
 
     #(0..100) |> Enum.each(fn _idx ->
     #  r = SecureRandom.hex(20)
@@ -73,7 +73,7 @@ defmodule Throttle.Handler do
     {:ok, session, state}
   end
 
-  @impl Riverside.Behaviour
+  @impl Riverside
   def handle_info({:pubsub_message, topic, data, _pid}, session, state) do
 
     Logger.info "<Throttle.Handler> received message"
@@ -85,7 +85,7 @@ defmodule Throttle.Handler do
     {:ok, session, state}
   end
 
-  @impl Riverside.Behaviour
+  @impl Riverside
   def handle_message(msg, session, state) do
 
     Logger.info "<Throttle.Handler> handle_message"
@@ -95,7 +95,7 @@ defmodule Throttle.Handler do
 
     topic = "test_u:#{dest}"
 
-    Pubsub.pub(topic, Poison.encode!(%{
+    Pubsub.pub!(topic, Poison.encode!(%{
       from:    session.user_id,
       content: content,
     }))
@@ -103,9 +103,13 @@ defmodule Throttle.Handler do
     {:ok, session, state}
   end
 
-  @impl Riverside.Behaviour
+  @impl Riverside
   def terminate(reason, session, state) do
     Logger.info "<Throttle.Handler> terminate"
+    Pubsub.unsub!("test_u:1")
+    Pubsub.unsub!("test_u:2")
+    Pubsub.unsub!("test_u:3")
+    Pubsub.unsub!("test_s:#{session.user_id}/#{session.id}")
     :ok
   end
 

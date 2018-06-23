@@ -22,12 +22,10 @@ defmodule Throttle.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      {:roulette, github: "lyokato/roulette", ref: "93b9621fbecb85c7ccfe0526af91d18b6b497624"},
+      {:roulette, github: "lyokato/roulette", ref: "1c016b92da15a98ac39520d73e1d7aecdae37ef1"},
       {:httpoison, "~> 1.1"},
       {:secure_random, "~> 0.5.1"},
       {:riverside, "~> 1.1.0"}
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
     ]
   end
 end
